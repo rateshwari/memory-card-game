@@ -21,24 +21,32 @@ const [bestTime, setBestTime] = useState(
   localStorage.getItem("bestTime") || "-"
 );
 
+const [difficulty, setDifficulty] = useState("easy");
+
   // Shuffle cards
   const shuffleCards = () => {
-    const shuffledCards = [...cardSymbols, ...cardSymbols]
-      .sort(() => Math.random() - 0.5)
-      .map((symbol, index) => ({
-        id: index,
-        symbol,
-        matched: false,
-      }));
+  let pairCount = 8;
 
-    setCards(shuffledCards);
-    setFirstChoice(null);
-    setSecondChoice(null);
-    setMoves(0);
-    setTime(0);
-    setWon(false);
-  };
+  if (difficulty === "medium") pairCount = 10;
+  if (difficulty === "hard") pairCount = 12;
 
+  const selectedCards = cardSymbols.slice(0, pairCount);
+
+  const shuffledCards = [...selectedCards, ...selectedCards]
+    .sort(() => Math.random() - 0.5)
+    .map((symbol, index) => ({
+      id: index,
+      symbol,
+      matched: false,
+    }));
+
+  setCards(shuffledCards);
+  setFirstChoice(null);
+  setSecondChoice(null);
+  setMoves(0);
+  setTime(0);
+  setWon(false);
+};
   // Card selection
   const handleChoice = (card) => {
   if (card === firstChoice) return;
@@ -93,31 +101,36 @@ const [bestTime, setBestTime] = useState(
 
   // Win detection
   useEffect(() => {
-    if (
-      cards.length > 0 &&
-      cards.every((card) => card.matched)
-    ) {
-      setWon(true);
+  if (
+    cards.length > 0 &&
+    cards.every((card) => card.matched)
+  ) {
+    setWon(true);
 
-const savedMoves = localStorage.getItem("bestScore");
-const savedTime = localStorage.getItem("bestTime");
+    const savedMoves = localStorage.getItem("bestScore");
+    const savedTime = localStorage.getItem("bestTime");
 
-if (!savedMoves || moves < savedMoves) {
-  localStorage.setItem("bestScore", moves);
-  setBestScore(moves);
-}
-
-if (!savedTime || time < savedTime) {
-  localStorage.setItem("bestTime", time);
-  setBestTime(time);
-}
+    if (!savedMoves || moves < savedMoves) {
+      localStorage.setItem("bestScore", moves);
+      setBestScore(moves);
     }
-  }, [cards]);
 
-  // Start game automatically
-  useEffect(() => {
-    shuffleCards();
-  }, []);
+    if (!savedTime || time < savedTime) {
+      localStorage.setItem("bestTime", time);
+      setBestTime(time);
+    }
+  }
+}, [cards]);
+
+// START GAME
+useEffect(() => {
+  shuffleCards();
+}, []);
+
+// CHANGE DIFFICULTY
+useEffect(() => {
+  shuffleCards();
+}, [difficulty]);
 
   const formatTime = (seconds) => {
   const mins = Math.floor(seconds / 60);
@@ -132,6 +145,23 @@ if (!savedTime || time < savedTime) {
   <div className="app">
     <h1>🧠 Memory Card Game</h1>
     {won && <Confetti />}
+
+    <div className="difficulty">
+  <button
+  className={difficulty === "easy" ? "active" : ""}
+  onClick={() => setDifficulty("easy")}
+>
+  Easy
+</button>
+
+  <button onClick={() => setDifficulty("medium")}>
+    Medium
+  </button>
+
+  <button onClick={() => setDifficulty("hard")}>
+    Hard
+  </button>
+</div>
 
     <div className="stats">
       <p>⏱ Time: {formatTime(time)}</p>
@@ -158,12 +188,13 @@ if (!savedTime || time < savedTime) {
       </div>
     ) : (
       <GameBoard
-        cards={cards}
-        handleChoice={handleChoice}
-        firstChoice={firstChoice}
-        secondChoice={secondChoice}
-        disabled={disabled}
-      />
+  cards={cards}
+  handleChoice={handleChoice}
+  firstChoice={firstChoice}
+  secondChoice={secondChoice}
+  disabled={disabled}
+  difficulty={difficulty}
+/>
     )}
   </div>
 );

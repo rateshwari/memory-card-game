@@ -11,3 +11,23 @@
     gap: 10px;
   }
 }
+.card-grid {
+  gap: 15px;
+  margin: 30px auto;
+  justify-content: center;
+}
+
+.card-grid.easy .card {
+  width: 100px;
+  height: 100px;
+}
+
+.card-grid.medium .card {
+  width: 85px;
+  height: 85px;
+}
+
+.card-grid.hard .card {
+  width: 70px;
+  height: 70px;
+}

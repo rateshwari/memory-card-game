@@ -1,9 +1,29 @@
 import Card from "./Card";
 import "../styles/GameBoard.css";
 
-function GameBoard({ cards, handleChoice, firstChoice, secondChoice, disabled }) {
+function GameBoard({
+  cards,
+  handleChoice,
+  firstChoice,
+  secondChoice,
+  disabled,
+  difficulty,
+}) {
+  const columns =
+  difficulty === "hard"
+    ? 6
+    : difficulty === "medium"
+    ? 5
+    : 4;
+
   return (
-    <div className="card-grid">
+    <div
+      className="card-grid"
+      style={{
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+      }}
+    >
+        
       {cards.map((card) => (
         <Card
           key={card.id}
@@ -19,6 +39,9 @@ function GameBoard({ cards, handleChoice, firstChoice, secondChoice, disabled })
       ))}
     </div>
   );
+
+  
 }
+
 
 export default GameBoard;
